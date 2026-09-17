@@ -11,3 +11,10 @@ npm-debug.log*
 # Archivos del sistema
 .DS_Store
 Thumbs.db
+
+# Entorno virtual de Python para pruebas (no versionar)
+.venv/
+
+# Artefactos generados por las pruebas autónomas
+tests/reporte.json
+tests/evidencia.png
