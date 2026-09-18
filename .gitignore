@@ -1,0 +1,19 @@
+# Dependencias Node.js (workspaces)
+node_modules/
+
+# Variables de entorno con secretos
+.env
+
+# Entornos Python de pruebas
+.venv/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build del frontend
+frontend/dist/
+
+# Sistema
+.DS_Store
+Thumbs.db
