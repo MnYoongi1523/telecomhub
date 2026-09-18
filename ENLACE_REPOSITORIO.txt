@@ -1,0 +1,7 @@
+EVIDENCIA GA7-220501096-AA5-EV01
+Estudiante: MARIA CAMILA ORTEGA CARBAL
+Proyecto: TelecomHub (frontend React + API Express de registro e inicio de sesion)
+Repositorio: https://github.com/MnYoongi1523/telecomhub
+Rama: main
+Contenido del ZIP: archivos del proyecto (frontend/ y backend/), sin entornos de ejecucion (sin node_modules, sin .venv, sin .git).
+Ejecucion: descomprimir, ejecutar npm install, luego npm run dev (API en puerto 3001, UI en puerto 5173).
