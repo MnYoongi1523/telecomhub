@@ -1,0 +1,20 @@
+{
+  "name": "telecomhub",
+  "version": "1.0.0",
+  "description": "Monorepo TelecomHub: frontend React (principal) + API Express (dependencia)",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=telecomhub-api\" \"npm run dev --workspace=telecomhub-ui\"",
+    "dev:backend": "npm run dev --workspace=telecomhub-api",
+    "dev:frontend": "npm run dev --workspace=telecomhub-ui",
+    "start": "npm start --workspace=telecomhub-api",
+    "build": "npm run build --workspace=telecomhub-ui"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
