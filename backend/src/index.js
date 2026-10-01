@@ -1,18 +1,20 @@
 // Punto de entrada del servicio web TelecomHub API.
-// Tecnologías: Node.js + Express (componente "Construcción API").
-// Funcionalidad: registro e inicio de sesión con usuario y contraseña.
+// Tecnologías: Node.js + Express (componente "Diseño y desarrollo de servicios web").
+// Funcionalidad: todos los servicios que requiere el software de gestión
+// TelecomHub (clientes, planes, vendedores, contratos, facturas, pagos,
+// soporte, usuarios e indicadores).
 
 const express = require('express');
 const cors = require('cors');
-const authRoutes = require('./routes/auth.routes');
+const config = require('./config');
+const rutas = require('./routes');
+const { documento } = require('./docs/openapi');
+const { manejadorErrores } = require('./middlewares/manejadorErrores');
+const { sembrar } = require('./db/seed');
 
-// Puerto configurable por variable de entorno (3001 por defecto).
-const PORT = process.env.PORT || 3001;
-
-// Crear la aplicación Express.
 const app = express();
 
-// Middleware para permitir peticiones de otros orígenes (útil para el frontend React).
+// Middleware para permitir peticiones de otros orígenes (frontend React en :5173).
 app.use(cors());
 
 // Middleware para interpretar cuerpos JSON en las peticiones.
@@ -20,18 +22,47 @@ app.use(express.json());
 
 // Ruta de salud: permite verificar que el servicio está en línea.
 app.get('/api/salud', (req, res) => {
-  res.json({ ok: true, mensaje: 'Servicio TelecomHub API en línea.' });
+  res.status(200).json({
+    ok: true,
+    mensaje: 'Servicio TelecomHub API en línea.',
+    version: '1.0.0',
+  });
 });
 
-// Montar las rutas de autenticación bajo el prefijo /api/auth.
-app.use('/api/auth', authRoutes);
+// Ruta de documentación: entrega la especificación OpenAPI 3.0 de todos los
+// servicios web. Puede importarse en Postman o Swagger Editor.
+app.get('/api/documentacion', (req, res) => {
+  res.status(200).json(documento());
+});
 
-// Manejador para rutas no encontradas (404).
+// Montar todos los servicios web de la API bajo el prefijo /api.
+app.use('/api', rutas);
+
+// Manejador de rutas no encontradas (404).
 app.use((req, res) => {
-  res.status(404).json({ ok: false, mensaje: 'Ruta no encontrada.' });
+  res.status(404).json({
+    ok: false,
+    mensaje: 'Ruta no encontrada.',
+    error: 'RUTA_NO_ENCONTRADA',
+  });
 });
 
-// Iniciar el servidor y mostrar la URL en consola.
-app.listen(PORT, () => {
-  console.log(`Servidor TelecomHub API escuchando en http://localhost:${PORT}`);
-});
+// Manejador global de errores: siempre responde en formato JSON.
+app.use(manejadorErrores);
+
+// Cargar los datos iniciales y levantar el servidor.
+// Se exporta la aplicación para que las pruebas puedan usarla sin abrir un puerto.
+async function iniciar() {
+  await sembrar();
+
+  app.listen(config.puerto, () => {
+    console.log(`Servidor TelecomHub API escuchando en http://localhost:${config.puerto}`);
+    console.log(`Documentación de servicios: http://localhost:${config.puerto}/api/documentacion`);
+  });
+}
+
+if (require.main === module) {
+  iniciar();
+}
+
+module.exports = app;

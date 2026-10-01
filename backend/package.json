@@ -1,12 +1,14 @@
 {
   "name": "telecomhub-api",
   "version": "1.0.0",
-  "description": "Servicio web de registro e inicio de sesión - TelecomHub (Componente Construcción API)",
+  "description": "Servicios web del software de gestión TelecomHub (Node.js + Express)",
   "type": "commonjs",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "dev": "node --watch src/index.js",
+    "test": "node --test tests/*.test.js",
+    "docs:openapi": "node scripts/generar-openapi.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
