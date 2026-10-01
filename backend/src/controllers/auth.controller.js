@@ -4,82 +4,39 @@
 // 2. Si la autenticación es correcta -> mensaje de autenticación satisfactoria.
 // 3. En caso contrario -> error en la autenticación.
 
-const jwt = require('jsonwebtoken');
 const userService = require('../services/user.service');
+const { creado, exito } = require('../utils/respuesta');
+const { capturar } = require('../utils/asyncHandler');
 
-// Secreto JWT tomado de variables de entorno (con valor formativo por defecto).
-const JWT_SECRET = process.env.JWT_SECRET || 'telecomhub-secreto-formativo';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
+// Registra un usuario nuevo en el sistema.
+const registrar = capturar(async (req, res) => {
+  const { username, password, nombre, rol, estado } = req.body;
 
-async function registrar(req, res) {
-  try {
-    // Extraer credenciales ya validadas por el middleware.
-    const { username, password } = req.body;
+  // El nombre, el rol y el estado son opcionales en el registro público:
+  // si no llegan se asignan los valores por defecto de un administrador.
+  const usuario = await userService.crearUsuario({
+    nombre: nombre || username,
+    username,
+    password,
+    rol: rol || 'Administrador',
+    estado: estado || 'Activo',
+  });
 
-    // Crear el usuario (cifra la contraseña internamente).
-    const usuario = await userService.crearUsuario(username, password);
+  return creado(res, 'Usuario registrado correctamente.', usuario);
+});
 
-    // Responder con 201 (Created) y mensaje de éxito.
-    return res.status(201).json({
-      ok: true,
-      mensaje: 'Usuario registrado correctamente.',
-      usuario,
-    });
-  } catch (error) {
-    // Si el usuario ya existe se devuelve 409 (Conflict).
-    if (error.code === 'USUARIO_DUPLICADO') {
-      return res.status(409).json({ ok: false, mensaje: error.message });
-    }
-    // Cualquier otro error se devuelve como 500.
-    console.error('Error en registro:', error);
-    return res.status(500).json({ ok: false, mensaje: 'Error interno del servidor.' });
-  }
-}
+// Inicia sesión: valida las credenciales y devuelve el token de acceso.
+const iniciarSesion = capturar(async (req, res) => {
+  const { username, password } = req.body;
+  const { token, usuario } = await userService.autenticar(username, password);
 
-async function iniciarSesion(req, res) {
-  try {
-    // Extraer credenciales ya validadas por el middleware.
-    const { username, password } = req.body;
+  return exito(res, 200, 'Autenticación satisfactoria. Bienvenido.', { token, usuario });
+});
 
-    // Buscar el usuario en el "almacén".
-    const usuario = await userService.buscarPorUsername(username);
+// Devuelve los datos del usuario autenticado en la petición.
+const perfil = capturar(async (req, res) => {
+  const usuario = userService.obtenerPorId(req.usuario.id);
+  return exito(res, 200, 'Perfil del usuario autenticado.', usuario);
+});
 
-    // Si no existe, devolver error de autenticación (401 Unauthorized).
-    // Se usa el mismo mensaje genérico por seguridad (no revelar si existe o no).
-    if (!usuario) {
-      return res.status(401).json({
-        ok: false,
-        mensaje: 'Error en la autenticación: usuario o contraseña incorrectos.',
-      });
-    }
-
-    // Verificar la contraseña contra el hash guardado.
-    const esValida = await userService.verificarPassword(password, usuario.passwordHash);
-    if (!esValida) {
-      return res.status(401).json({
-        ok: false,
-        mensaje: 'Error en la autenticación: usuario o contraseña incorrectos.',
-      });
-    }
-
-    // Autenticación correcta: generar un token JWT con id y username.
-    const token = jwt.sign(
-      { id: usuario.id, username: usuario.username },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
-    );
-
-    // Responder con mensaje de autenticación satisfactoria.
-    return res.status(200).json({
-      ok: true,
-      mensaje: 'Autenticación satisfactoria. Bienvenido.',
-      token,
-      usuario: { id: usuario.id, username: usuario.username },
-    });
-  } catch (error) {
-    console.error('Error en login:', error);
-    return res.status(500).json({ ok: false, mensaje: 'Error interno del servidor.' });
-  }
-}
-
-module.exports = { registrar, iniciarSesion };
+module.exports = { registrar, iniciarSesion, perfil };
