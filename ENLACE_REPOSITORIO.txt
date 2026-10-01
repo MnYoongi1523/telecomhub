@@ -100,6 +100,6 @@ independiente, de modo que el historial muestra el avance del desarrollo:
 Notas
 -----
 La evidencia se entrega en formato ZIP, con el nombre
-ARIA_ORTEGA_GA7-220501096-AA5-EV03.zip, y contiene los archivos del proyecto
-(sin entornos de ejecución: sin node_modules, sin .venv, sin .git) junto con
-este archivo de enlace del repositorio.
+MARIA_CAMILA_ORTEGA_CARBAL-GA7-220501096-AA5-EV03.zip, y contiene los archivos
+del proyecto (sin entornos de ejecución: sin node_modules, sin .venv, sin .git)
+junto con este archivo de enlace del repositorio.
