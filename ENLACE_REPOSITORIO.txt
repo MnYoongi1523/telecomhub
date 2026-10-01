@@ -1,7 +1,105 @@
-EVIDENCIA GA7-220501096-AA5-EV01
-Estudiante: MARIA CAMILA ORTEGA CARBAL
-Proyecto: TelecomHub (frontend React + API Express de registro e inicio de sesion)
+EVIDENCIA GA7-220501096-AA5-EV03
+Diseño y desarrollo de servicios web - proyecto
+================================================
+
+Estudiante:  MARIA CAMILA ORTEGA CARBAL
+Proyecto:    TelecomHub (API de servicios web en Node.js + Express)
 Repositorio: https://github.com/MnYoongi1523/telecomhub
-Rama: main
-Contenido del ZIP: archivos del proyecto (frontend/ y backend/), sin entornos de ejecucion (sin node_modules, sin .venv, sin .git).
-Ejecucion: descomprimir, ejecutar npm install, luego npm run dev (API en puerto 3001, UI en puerto 5173).
+Rama:        main
+
+Contenido
+---------
+El proyecto entregado se encuentra en la carpeta "backend" del repositorio
+(rama main). Allí están:
+
+  backend/
+  ├── src/
+  │   ├── config/       configuración del servicio por variables de entorno
+  │   ├── controllers/  controladores de cada módulo del software
+  │   ├── db/           almacén en memoria y datos iniciales
+  │   ├── docs/         especificación OpenAPI 3.0 de los servicios
+  │   ├── middlewares/  autenticación por token, permisos y errores
+  │   ├── routes/       rutas de los servicios web, agrupadas por módulo
+  │   ├── services/     reglas de negocio de cada módulo
+  │   ├── utils/        errores, fechas, validadores y respuestas
+  │   └── index.js      punto de entrada del servicio web
+  ├── docs/
+  │   ├── API.md        documentación de cada uno de los servicios web
+  │   ├── DISENO.md     diseño del software: entidades, estados y arquitectura
+  │   └── openapi.yaml  especificación OpenAPI 3.0 (importable en Postman)
+  ├── scripts/          generación automática de docs/openapi.yaml
+  ├── tests/            pruebas de los servicios web
+  ├── package.json
+  └── README.md
+
+Documentación de los servicios
+------------------------------
+  * Documento de cada servicio:  backend/docs/API.md
+  * Diseño del software:          backend/docs/DISENO.md
+  * Especificación OpenAPI:       backend/docs/openapi.yaml
+  * En caliente al ejecutar:      http://localhost:3001/api/documentacion
+  * Catálogo de rutas:            http://localhost:3001/api/servicios
+
+Servicios web entregados (34 rutas)
+-----------------------------------
+  Autenticación  POST /api/auth/registro, POST /api/auth/login, GET /api/auth/perfil
+  Dashboard      GET  /api/dashboard, /api/dashboard/indicadores,
+                     /api/dashboard/ventas-vendedores,
+                     /api/dashboard/clientes/:id/estado-cuenta
+  Administración GET/POST/PUT/PATCH/DELETE /api/usuarios
+  Planes         GET/POST/PUT/PATCH/DELETE /api/planes
+  Clientes       GET/POST/PUT/PATCH/DELETE /api/clientes
+  Vendedores     GET/POST/PUT/PATCH/DELETE /api/vendedores
+  Contratos      GET/POST/PUT/PATCH/DELETE /api/contratos
+  Facturas       GET/POST/PUT/DELETE /api/facturas
+  Pagos          GET/POST/DELETE /api/pagos, GET /api/pagos/facturas-pendientes
+  Soporte        GET/POST/PUT/PATCH/DELETE /api/soporte
+  General        GET /api/salud, /api/documentacion, /api/servicios
+
+Versiones
+---------
+  * Node.js 18 o superior (probado en Node v24 con npm 11)
+  * express 4.19 · jsonwebtoken 9.0 · bcryptjs 2.4 · cors 2.8
+
+Ejecución
+---------
+  1. Descomprimir la carpeta comprimida.
+  2. Entrar a la carpeta "backend".
+  3. npm install
+  4. npm start        → servicio en http://localhost:3001
+  5. npm test         → ejecuta 32 pruebas de los servicios web
+
+  Usuarios de prueba:
+     administrador / Admin123     (Administrador)
+     supervisor   / Super123     (Supervisor)
+     soporte      / Soporte123   (Soporte Técnico)
+
+  Para levantar también la interfaz (carpeta "frontend" del repositorio):
+     npm install  y  npm run dev   → interfaz en http://localhost:5173
+
+Versionamiento
+--------------
+El proyecto fue creado con Git. Cada módulo de la API se registró en un commit
+independiente, de modo que el historial muestra el avance del desarrollo:
+
+  git clone https://github.com/MnYoongi1523/telecomhub.git
+  git log --oneline
+
+  Commits de esta evidencia:
+    * feat(db): capa de persistencia en memoria, datos iniciales y utilidades
+    * feat(auth): autenticacion JWT, permisos por rol y manejo global de errores
+    * feat(catalogo): servicios web de planes, vendedores y clientes
+    * feat(contratos): servicios web de contratos con estado calculado
+    * feat(facturacion): servicios web de facturas y pagos
+    * feat(soporte): servicios web de tickets e indicadores del dashboard
+    * feat(administracion): servicios web de usuarios del sistema
+    * feat(api): montaje de los servicios por modulo y punto de entrada
+    * docs(api): documentacion de cada servicio web y especificacion OpenAPI
+    * test(api): 32 pruebas de los servicios web sobre HTTP real
+
+Notas
+-----
+La evidencia se entrega en formato ZIP, con el nombre
+ARIA_ORTEGA_GA7-220501096-AA5-EV03.zip, y contiene los archivos del proyecto
+(sin entornos de ejecución: sin node_modules, sin .venv, sin .git) junto con
+este archivo de enlace del repositorio.
