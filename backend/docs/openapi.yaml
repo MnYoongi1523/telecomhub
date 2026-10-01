@@ -1,0 +1,3843 @@
+# Especificación de los servicios web de TelecomHub API.
+# Archivo generado con: npm run docs:openapi
+# La misma especificación está disponible en http://localhost:3001/api/documentacion
+
+openapi: "3.0.3"
+info:
+  title: "TelecomHub API"
+  version: "1.0.0"
+  description: "Servicios web del software de gestión TelecomHub: autenticación, clientes, planes de servicio, vendedores, contratos, facturación, pagos, soporte e indicadores."
+servers:
+    - url: "http://localhost:3001"
+      description: "Servidor local de desarrollo"
+tags:
+    - name: "General"
+      description: "Estado del servicio y documentación"
+    - name: "Autenticación"
+      description: "Registro, inicio de sesión y perfil"
+    - name: "Dashboard"
+      description: "Indicadores y reportes"
+    - name: "Administración"
+      description: "Usuarios del sistema y roles"
+    - name: "Planes"
+      description: "Catálogo de planes de servicio"
+    - name: "Clientes"
+      description: "Clientes del servicio de internet"
+    - name: "Vendedores"
+      description: "Asesores comerciales"
+    - name: "Contratos"
+      description: "Contratos de servicio"
+    - name: "Facturas"
+      description: "Facturación mensual"
+    - name: "Pagos"
+      description: "Pagos de facturas"
+    - name: "Soporte"
+      description: "Tickets de soporte"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+  schemas:
+    Error:
+      type: "object"
+      properties:
+        ok:
+          type: "boolean"
+          example: false
+        mensaje:
+          type: "string"
+        error:
+          type: "string"
+          description: "Código de error"
+    Cliente:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 1
+        nombre:
+          type: "string"
+          example: "Carlos Mendoza"
+        cedula:
+          type: "string"
+          example: "1010203040"
+        telefono:
+          type: "string"
+          example: "+57 300 123 4567"
+        correo:
+          type: "string"
+          example: "carlos.mendoza@correo.com"
+        planId:
+          type: "integer"
+          example: 2
+        plan:
+          type: "string"
+          description: "Nombre del plan (solo lectura)"
+          example: "Fibra 300MB"
+        direccion:
+          type: "string"
+        estado:
+          type: "string"
+          enum:
+              - "Activo"
+              - "Suspendido"
+        contratosActivos:
+          type: "integer"
+    Plan:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 1
+        nombre:
+          type: "string"
+          example: "Fibra 100MB"
+        velocidad:
+          type: "integer"
+          description: "Mbps"
+          example: 100
+        precio:
+          type: "number"
+          description: "Valor mensual en pesos"
+          example: 65000
+        tipo:
+          type: "string"
+          enum:
+              - "Fibra"
+              - "Banda Ancha"
+              - "Cable"
+              - "Inalámbrico"
+        estado:
+          type: "string"
+          enum:
+              - "Activo"
+              - "Inactivo"
+    Vendedor:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        nombre:
+          type: "string"
+        cedula:
+          type: "string"
+        telefono:
+          type: "string"
+        correo:
+          type: "string"
+        estado:
+          type: "string"
+          enum:
+              - "Activo"
+              - "Inactivo"
+    Contrato:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        clienteId:
+          type: "integer"
+        planId:
+          type: "integer"
+        vendedorId:
+          type: "integer"
+        cliente:
+          type: "string"
+          description: "Nombre del cliente (solo lectura)"
+        plan:
+          type: "string"
+        vendedor:
+          type: "string"
+        inicio:
+          type: "string"
+          format: "date"
+        fin:
+          type: "string"
+          format: "date"
+          description: "Fecha calculada de finalización"
+        diasRestantes:
+          type: "integer"
+        vigenciaMeses:
+          type: "integer"
+          enum:
+              - 6
+              - 12
+              - 24
+        valorMensual:
+          type: "number"
+        cancelado:
+          type: "boolean"
+        estado:
+          type: "string"
+          enum:
+              - "Vigente"
+              - "Por vencer"
+              - "Finalizado"
+              - "Cancelado"
+          description: "Estado calculado a partir de las fechas"
+    Factura:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        contratoId:
+          type: "integer"
+        clienteId:
+          type: "integer"
+        planId:
+          type: "integer"
+        cliente:
+          type: "string"
+        plan:
+          type: "string"
+        valor:
+          type: "number"
+        emision:
+          type: "string"
+          format: "date"
+        vencimiento:
+          type: "string"
+          format: "date"
+        diasParaVencer:
+          type: "integer"
+        pagada:
+          type: "boolean"
+        estado:
+          type: "string"
+          enum:
+              - "Pagada"
+              - "Pendiente"
+              - "Vencida"
+    Pago:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        facturaId:
+          type: "integer"
+        clienteId:
+          type: "integer"
+        cliente:
+          type: "string"
+        valor:
+          type: "number"
+        fecha:
+          type: "string"
+          format: "date"
+        metodo:
+          type: "string"
+          enum:
+              - "Efectivo"
+              - "Transferencia"
+              - "Tarjeta"
+    Ticket:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        clienteId:
+          type: "integer"
+        cliente:
+          type: "string"
+        asunto:
+          type: "string"
+        descripcion:
+          type: "string"
+        prioridad:
+          type: "string"
+          enum:
+              - "Alta"
+              - "Media"
+              - "Baja"
+        estado:
+          type: "string"
+          enum:
+              - "Abierto"
+              - "En proceso"
+              - "Resuelto"
+        fecha:
+          type: "string"
+          format: "date"
+    Usuario:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        nombre:
+          type: "string"
+        username:
+          type: "string"
+        rol:
+          type: "string"
+          enum:
+              - "Administrador"
+              - "Supervisor"
+              - "Soporte Técnico"
+        estado:
+          type: "string"
+          enum:
+              - "Activo"
+              - "Inactivo"
+        creadoEn:
+          type: "string"
+          format: "date-time"
+security:
+    - bearerAuth: []
+paths:
+  /api/salud:
+    get:
+      tags:
+          - "General"
+      summary: "Verificar que el servicio está en línea"
+      security: []
+      responses:
+        200:
+          description: "Servicio disponible"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                  mensaje:
+                    type: "string"
+                  version:
+                    type: "string"
+  /api/documentacion:
+    get:
+      tags:
+          - "General"
+      summary: "Especificación OpenAPI de todos los servicios"
+      security: []
+      responses:
+        200:
+          description: "Documentación en formato OpenAPI 3.0"
+  /api/servicios:
+    get:
+      tags:
+          - "General"
+      summary: "Catálogo de servicios web agrupados por módulo"
+      responses:
+        200:
+          description: "Listado de rutas disponibles"
+  /api/auth/registro:
+    post:
+      tags:
+          - "Autenticación"
+      summary: "Registrar un usuario en el sistema"
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                  minLength: 3
+                  example: "operador"
+                password:
+                  type: "string"
+                  minLength: 6
+                  example: "Clave123"
+                nombre:
+                  type: "string"
+                  example: "Operador de pruebas"
+                rol:
+                  type: "string"
+                  enum:
+                      - "Administrador"
+                      - "Supervisor"
+                      - "Soporte Técnico"
+              required:
+                  - "username"
+                  - "password"
+      responses:
+        201:
+          description: "Usuario creado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/auth/login:
+    post:
+      tags:
+          - "Autenticación"
+      summary: "Iniciar sesión con usuario y contraseña"
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                  example: "administrador"
+                password:
+                  type: "string"
+                  example: "Admin123"
+              required:
+                  - "username"
+                  - "password"
+      responses:
+        200:
+          description: "Autenticación satisfactoria, devuelve el token de acceso"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                  mensaje:
+                    type: "string"
+                    example: "Autenticación satisfactoria. Bienvenido."
+                  data:
+                    type: "object"
+                    properties:
+                      token:
+                        type: "string"
+                      usuario:
+                        $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/auth/perfil:
+    get:
+      tags:
+          - "Autenticación"
+      summary: "Consultar el perfil del usuario autenticado"
+      responses:
+        200:
+          description: "Perfil del usuario"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/dashboard:
+    get:
+      tags:
+          - "Dashboard"
+      summary: "Resumen de gestión para la pantalla principal"
+      responses:
+        200:
+          description: "Indicadores y últimas novedades"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Error"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/dashboard/indicadores:
+    get:
+      tags:
+          - "Dashboard"
+      summary: "Indicadores numéricos del negocio"
+      responses:
+        200:
+          description: "Totales de clientes, contratos, facturación, pagos y soporte"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/dashboard/ventas-vendedores:
+    get:
+      tags:
+          - "Dashboard"
+      summary: "Reporte de ventas por vendedor"
+      responses:
+        200:
+          description: "Contratos e ingreso mensual por vendedor"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/dashboard/clientes/{clienteId}/estado-cuenta:
+    get:
+      tags:
+          - "Dashboard"
+      summary: "Estado de cuenta de un cliente"
+      parameters:
+          - name: "clienteId"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Contratos, facturas, pagos y saldos del cliente"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/usuarios:
+    get:
+      tags:
+          - "Administración"
+      summary: "Listar usuarios del sistema"
+      parameters:
+          - name: "estado"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Activo"
+                  - "Inactivo"
+          - name: "rol"
+            in: "query"
+            schema:
+              type: "string"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Usuarios del sistema"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Administración"
+      summary: "Crear un usuario del sistema (solo Administrador)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                username:
+                  type: "string"
+                  minLength: 4
+                password:
+                  type: "string"
+                  minLength: 6
+                rol:
+                  type: "string"
+                  enum:
+                      - "Administrador"
+                      - "Supervisor"
+                      - "Soporte Técnico"
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Inactivo"
+              required:
+                  - "nombre"
+                  - "username"
+                  - "password"
+                  - "rol"
+                  - "estado"
+      responses:
+        201:
+          description: "Usuario creado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/usuarios/{id}:
+    get:
+      tags:
+          - "Administración"
+      summary: "Consultar un usuario"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Usuario encontrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+          - "Administración"
+      summary: "Actualizar un usuario"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                username:
+                  type: "string"
+                password:
+                  type: "string"
+                rol:
+                  type: "string"
+                estado:
+                  type: "string"
+              required: []
+      responses:
+        200:
+          description: "Usuario actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Administración"
+      summary: "Eliminar un usuario"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Usuario eliminado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/usuarios/{id}/estado:
+    patch:
+      tags:
+          - "Administración"
+      summary: "Activar o desactivar un usuario"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Inactivo"
+              required:
+                  - "estado"
+      responses:
+        200:
+          description: "Estado actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Usuario"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/planes:
+    get:
+      tags:
+          - "Planes"
+      summary: "Listar planes de servicio"
+      parameters:
+          - name: "estado"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Activo"
+                  - "Inactivo"
+          - name: "tipo"
+            in: "query"
+            schema:
+              type: "string"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Planes de servicio"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Plan"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Planes"
+      summary: "Crear un plan de servicio"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                  minLength: 3
+                  maxLength: 40
+                velocidad:
+                  type: "integer"
+                  minimum: 1
+                  maximum: 2000
+                precio:
+                  type: "number"
+                  minimum: 1
+                  maximum: 5000000
+                tipo:
+                  type: "string"
+                  enum:
+                      - "Fibra"
+                      - "Banda Ancha"
+                      - "Cable"
+                      - "Inalámbrico"
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Inactivo"
+              required:
+                  - "nombre"
+                  - "velocidad"
+                  - "precio"
+                  - "tipo"
+                  - "estado"
+      responses:
+        201:
+          description: "Plan creado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Plan"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/planes/{id}:
+    get:
+      tags:
+          - "Planes"
+      summary: "Consultar un plan de servicio"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Plan encontrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Plan"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+          - "Planes"
+      summary: "Actualizar un plan de servicio"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                velocidad:
+                  type: "integer"
+                precio:
+                  type: "number"
+                tipo:
+                  type: "string"
+                estado:
+                  type: "string"
+              required: []
+      responses:
+        200:
+          description: "Plan actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Plan"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Planes"
+      summary: "Eliminar un plan de servicio"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Plan eliminado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Plan"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/planes/{id}/estado:
+    patch:
+      tags:
+          - "Planes"
+      summary: "Activar o inactivar un plan de servicio"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Inactivo"
+              required:
+                  - "estado"
+      responses:
+        200:
+          description: "Estado actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Plan"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/clientes:
+    get:
+      tags:
+          - "Clientes"
+      summary: "Listar clientes"
+      parameters:
+          - name: "estado"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Activo"
+                  - "Suspendido"
+          - name: "planId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Clientes registrados"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Cliente"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Clientes"
+      summary: "Registrar un cliente"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                  minLength: 3
+                  maxLength: 50
+                cedula:
+                  type: "string"
+                  description: "Entre 6 y 10 dígitos"
+                telefono:
+                  type: "string"
+                  example: "+57 300 123 4567"
+                correo:
+                  type: "string"
+                  format: "email"
+                planId:
+                  type: "integer"
+                direccion:
+                  type: "string"
+                  maxLength: 120
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Suspendido"
+              required:
+                  - "nombre"
+                  - "cedula"
+                  - "telefono"
+                  - "correo"
+                  - "planId"
+                  - "estado"
+      responses:
+        201:
+          description: "Cliente registrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Cliente"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/clientes/{id}:
+    get:
+      tags:
+          - "Clientes"
+      summary: "Consultar un cliente"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Cliente encontrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Cliente"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+          - "Clientes"
+      summary: "Actualizar un cliente"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                cedula:
+                  type: "string"
+                telefono:
+                  type: "string"
+                correo:
+                  type: "string"
+                planId:
+                  type: "integer"
+                direccion:
+                  type: "string"
+                estado:
+                  type: "string"
+              required: []
+      responses:
+        200:
+          description: "Cliente actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Cliente"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Clientes"
+      summary: "Eliminar un cliente sin contratos ni facturas"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Cliente eliminado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Cliente"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/clientes/{id}/estado:
+    patch:
+      tags:
+          - "Clientes"
+      summary: "Suspender o reactivar un cliente"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Suspendido"
+              required:
+                  - "estado"
+      responses:
+        200:
+          description: "Estado actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Cliente"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/vendedores:
+    get:
+      tags:
+          - "Vendedores"
+      summary: "Listar vendedores"
+      parameters:
+          - name: "estado"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Activo"
+                  - "Inactivo"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Vendedores"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Vendedor"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Vendedores"
+      summary: "Registrar un vendedor"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                cedula:
+                  type: "string"
+                telefono:
+                  type: "string"
+                correo:
+                  type: "string"
+                  format: "email"
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Inactivo"
+              required:
+                  - "nombre"
+                  - "cedula"
+                  - "telefono"
+                  - "correo"
+                  - "estado"
+      responses:
+        201:
+          description: "Vendedor registrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Vendedor"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/vendedores/{id}:
+    get:
+      tags:
+          - "Vendedores"
+      summary: "Consultar un vendedor"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Vendedor encontrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Vendedor"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+          - "Vendedores"
+      summary: "Actualizar un vendedor"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nombre:
+                  type: "string"
+                cedula:
+                  type: "string"
+                telefono:
+                  type: "string"
+                correo:
+                  type: "string"
+                estado:
+                  type: "string"
+              required: []
+      responses:
+        200:
+          description: "Vendedor actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Vendedor"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Vendedores"
+      summary: "Eliminar un vendedor sin contratos"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Vendedor eliminado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Vendedor"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/vendedores/{id}/estado:
+    patch:
+      tags:
+          - "Vendedores"
+      summary: "Activar o inactivar un vendedor"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                estado:
+                  type: "string"
+                  enum:
+                      - "Activo"
+                      - "Inactivo"
+              required:
+                  - "estado"
+      responses:
+        200:
+          description: "Estado actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Vendedor"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/contratos:
+    get:
+      tags:
+          - "Contratos"
+      summary: "Listar contratos"
+      parameters:
+          - name: "clienteId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "vendedorId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "planId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "estado"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Vigente"
+                  - "Por vencer"
+                  - "Finalizado"
+                  - "Cancelado"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Contratos"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Contrato"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Contratos"
+      summary: "Registrar un contrato"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                clienteId:
+                  type: "integer"
+                planId:
+                  type: "integer"
+                vendedorId:
+                  type: "integer"
+                inicio:
+                  type: "string"
+                  format: "date"
+                  description: "No puede ser futura ni mayor a un año"
+                vigenciaMeses:
+                  type: "integer"
+                  enum:
+                      - 6
+                      - 12
+                      - 24
+              required:
+                  - "clienteId"
+                  - "planId"
+                  - "vendedorId"
+                  - "inicio"
+                  - "vigenciaMeses"
+      responses:
+        201:
+          description: "Contrato registrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Contrato"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/contratos/{id}:
+    get:
+      tags:
+          - "Contratos"
+      summary: "Consultar un contrato"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Contrato encontrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Contrato"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+          - "Contratos"
+      summary: "Actualizar un contrato vigente"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                clienteId:
+                  type: "integer"
+                planId:
+                  type: "integer"
+                vendedorId:
+                  type: "integer"
+                inicio:
+                  type: "string"
+                  format: "date"
+                vigenciaMeses:
+                  type: "integer"
+              required: []
+      responses:
+        200:
+          description: "Contrato actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Contrato"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Contratos"
+      summary: "Eliminar un contrato sin facturas"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Contrato eliminado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Contrato"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/contratos/{id}/cancelar:
+    patch:
+      tags:
+          - "Contratos"
+      summary: "Cancelar un contrato vigente"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Contrato cancelado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Contrato"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/contratos/{id}/reactivar:
+    patch:
+      tags:
+          - "Contratos"
+      summary: "Reactivar un contrato cancelado"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Contrato reactivado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Contrato"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/facturas:
+    get:
+      tags:
+          - "Facturas"
+      summary: "Listar facturas"
+      parameters:
+          - name: "clienteId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "contratoId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "estado"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Pagada"
+                  - "Pendiente"
+                  - "Vencida"
+          - name: "pagada"
+            in: "query"
+            schema:
+              type: "boolean"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Facturas"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Factura"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Facturas"
+      summary: "Emitir una factura para un contrato"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                contratoId:
+                  type: "integer"
+                emision:
+                  type: "string"
+                  format: "date"
+                vencimiento:
+                  type: "string"
+                  format: "date"
+                  description: "Debe ser posterior a la emisión"
+              required:
+                  - "contratoId"
+                  - "emision"
+                  - "vencimiento"
+      responses:
+        201:
+          description: "Factura generada"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Factura"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/facturas/{id}:
+    get:
+      tags:
+          - "Facturas"
+      summary: "Consultar una factura"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Factura encontrada"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Factura"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+          - "Facturas"
+      summary: "Actualizar las fechas de una factura pendiente"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                emision:
+                  type: "string"
+                  format: "date"
+                vencimiento:
+                  type: "string"
+                  format: "date"
+              required: []
+      responses:
+        200:
+          description: "Factura actualizada"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Factura"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Facturas"
+      summary: "Eliminar una factura sin pagos"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Factura eliminada"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Factura"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pagos:
+    get:
+      tags:
+          - "Pagos"
+      summary: "Listar pagos"
+      parameters:
+          - name: "clienteId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "facturaId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "metodo"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Efectivo"
+                  - "Transferencia"
+                  - "Tarjeta"
+          - name: "desde"
+            in: "query"
+            schema:
+              type: "string"
+              format: "date"
+          - name: "hasta"
+            in: "query"
+            schema:
+              type: "string"
+              format: "date"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Pagos registrados"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Pago"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Pagos"
+      summary: "Registrar el pago de una factura"
+      description: "Al registrar el pago, la factura queda marcada como pagada."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                facturaId:
+                  type: "integer"
+                fecha:
+                  type: "string"
+                  format: "date"
+                  description: "Entre la emisión de la factura y hoy"
+                metodo:
+                  type: "string"
+                  enum:
+                      - "Efectivo"
+                      - "Transferencia"
+                      - "Tarjeta"
+              required:
+                  - "facturaId"
+                  - "fecha"
+                  - "metodo"
+      responses:
+        201:
+          description: "Pago registrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Pago"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pagos/facturas-pendientes:
+    get:
+      tags:
+          - "Pagos"
+      summary: "Listar las facturas que aún no tienen pago"
+      responses:
+        200:
+          description: "Facturas pendientes"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Factura"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pagos/{id}:
+    get:
+      tags:
+          - "Pagos"
+      summary: "Consultar un pago"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Pago encontrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Pago"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Pagos"
+      summary: "Eliminar un pago y liberar la factura"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Pago eliminado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Pago"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/soporte:
+    get:
+      tags:
+          - "Soporte"
+      summary: "Listar tickets de soporte"
+      parameters:
+          - name: "clienteId"
+            in: "query"
+            schema:
+              type: "integer"
+          - name: "prioridad"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Alta"
+                  - "Media"
+                  - "Baja"
+          - name: "estado"
+            in: "query"
+            schema:
+              type: "string"
+              enum:
+                  - "Abierto"
+                  - "En proceso"
+                  - "Resuelto"
+          - name: "busqueda"
+            in: "query"
+            schema:
+              type: "string"
+      responses:
+        200:
+          description: "Tickets"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  total:
+                    type: "integer"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Ticket"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+          - "Soporte"
+      summary: "Registrar un ticket de soporte"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                clienteId:
+                  type: "integer"
+                asunto:
+                  type: "string"
+                  minLength: 4
+                  maxLength: 80
+                descripcion:
+                  type: "string"
+                  minLength: 10
+                prioridad:
+                  type: "string"
+                  enum:
+                      - "Alta"
+                      - "Media"
+                      - "Baja"
+                estado:
+                  type: "string"
+                  enum:
+                      - "Abierto"
+                      - "En proceso"
+                      - "Resuelto"
+              required:
+                  - "clienteId"
+                  - "asunto"
+                  - "descripcion"
+                  - "prioridad"
+                  - "estado"
+      responses:
+        201:
+          description: "Ticket registrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/soporte/{id}:
+    get:
+      tags:
+          - "Soporte"
+      summary: "Consultar un ticket"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Ticket encontrado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+          - "Soporte"
+      summary: "Actualizar un ticket"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                clienteId:
+                  type: "integer"
+                asunto:
+                  type: "string"
+                descripcion:
+                  type: "string"
+                prioridad:
+                  type: "string"
+                estado:
+                  type: "string"
+              required: []
+      responses:
+        200:
+          description: "Ticket actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+          - "Soporte"
+      summary: "Eliminar un ticket"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      responses:
+        200:
+          description: "Ticket eliminado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/soporte/{id}/estado:
+    patch:
+      tags:
+          - "Soporte"
+      summary: "Cambiar el estado de seguimiento del ticket"
+      parameters:
+          - name: "id"
+            in: "path"
+            required: true
+            schema:
+              type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                estado:
+                  type: "string"
+                  enum:
+                      - "Abierto"
+                      - "En proceso"
+                      - "Resuelto"
+              required:
+                  - "estado"
+      responses:
+        200:
+          description: "Estado actualizado"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  ok:
+                    type: "boolean"
+                    example: true
+                  mensaje:
+                    type: "string"
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          description: "Los datos enviados no cumplen las reglas de validación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Falta el token de autenticación o las credenciales no son válidas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: "El rol del usuario no tiene permiso para la operación"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "El recurso solicitado no existe"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflicto: el recurso ya existe o está en uso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

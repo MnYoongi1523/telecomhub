@@ -1,95 +1,116 @@
-# TelecomHub API — Registro e Inicio de Sesión
+# TelecomHub API — Servicios web del proyecto
 
-Proyecto del componente formativo **“Construcción API”**.
+Evidencia **GA7-220501096-AA5-EV03** — *Diseño y desarrollo de servicios web –
+proyecto* (componente formativo).
 
-## 1. Diseño del servicio
+Servicio web que soporta el software de gestión **TelecomHub**: los nueve
+módulos de la interfaz (Dashboard, Clientes, Planes de Servicio, Contratos,
+Facturas, Pagos, Vendedores, Soporte y Administración) consumen sus datos de
+esta API.
 
-**Objetivo:** exponer un servicio web que reciba `usuario` y `contraseña`:
-- Si la autenticación es correcta → mensaje de **autenticación satisfactoria**.
-- En caso contrario → **error en la autenticación**.
+## 1. Documentación
 
-**Arquitectura (por capas):**
+| Documento | Contenido |
+|---|---|
+| [`docs/API.md`](docs/API.md) | **Documentación de cada servicio web**: método, ruta, datos de entrada, reglas de validación, códigos de respuesta y ejemplos |
+| [`docs/DISENO.md`](docs/DISENO.md) | Diseño: entidades, diagrama de relaciones, estados, transiciones, arquitectura por capas y seguridad |
+| [`docs/openapi.yaml`](docs/openapi.yaml) | Especificación OpenAPI 3.0 de los 34 servicios (importable en Postman o Swagger Editor) |
+| `GET /api/documentacion` | La misma especificación servida por el servicio en caliente |
+| `GET /api/servicios` | Catálogo de rutas agrupadas por módulo |
 
-```
-Cliente (frontend / Postman / curl)
-        │  JSON por HTTP
-        ▼
-src/index.js            → servidor Express + CORS + JSON
-src/routes/auth.routes.js → define POST /registro y POST /login
-src/middlewares/validateAuth.js → valida usuario (≥3) y contraseña (≥6)
-src/controllers/auth.controller.js → orquesta registro/login + JWT
-src/services/user.service.js → almacén en memoria + bcrypt
-```
+## 2. Servicios web por módulo
 
-**Modelo Usuario:**
-
-| Campo | Tipo | Descripción |
+| Módulo | Prefijo | Servicios |
 |---|---|---|
-| id | number | Consecutivo autoincremental |
-| username | string | Normalizado a minúsculas, único |
-| passwordHash | string | Hash bcrypt (nunca texto plano) |
-| creadoEn | string | Fecha ISO de creación |
+| Autenticación | `/api/auth` | Registro, inicio de sesión, perfil |
+| Dashboard | `/api/dashboard` | Resumen, indicadores, ventas por vendedor, estado de cuenta |
+| Administración | `/api/usuarios` | CRUD de usuarios y activación por rol |
+| Planes de servicio | `/api/planes` | CRUD, activar/inactivar |
+| Clientes | `/api/clientes` | CRUD, suspender/reactivar |
+| Vendedores | `/api/vendedores` | CRUD, activar/inactivar |
+| Contratos | `/api/contratos` | CRUD, cancelar, reactivar |
+| Facturas | `/api/facturas` | CRUD y emisión |
+| Pagos | `/api/pagos` | Registro, consulta, eliminación y facturas pendientes |
+| Soporte | `/api/soporte` | CRUD de tickets y cambio de estado |
+| General | `/api` | Estado del servicio, documentación y catálogo |
 
-**Endpoints:**
+## 3. Arquitectura
 
-| Método | Ruta | Entrada | Éxito | Error |
-|---|---|---|---|---|
-| GET | `/api/salud` | — | `200` servicio en línea | — |
-| POST | `/api/auth/registro` | `{ "username": "admin", "password": "123456" }` | `201` Usuario registrado correctamente | `400` datos inválidos, `409` duplicado |
-| POST | `/api/auth/login` | `{ "username": "admin", "password": "123456" }` | `200` Autenticación satisfactoria + `token` | `401` usuario o contraseña incorrectos |
-
-El campo `username` acepta también el alias `usuario`, y `password` acepta `contrasena`/`contraseña`.
-
-**Ejemplo login correcto:**
-
-```json
-{
-  "ok": true,
-  "mensaje": "Autenticación satisfactoria. Bienvenido.",
-  "token": "<JWT>",
-  "usuario": { "id": 1, "username": "admin" }
-}
+```
+Cliente (React · Postman · curl)
+        │  JSON sobre HTTP
+        ▼
+Rutas          → método, ruta, middlewares y controlador
+Middlewares    → verificarToken · autorizarRoles · manejadorErrores
+Controladores  → traducen HTTP a llamadas de servicio
+Servicios      → reglas de negocio, validaciones y estados calculados
+Persistencia   → almacén en memoria con datos iniciales
 ```
 
-**Ejemplo error:**
+## 4. Requisitos y ejecución
 
-```json
-{
-  "ok": false,
-  "mensaje": "Error en la autenticación: usuario o contraseña incorrectos."
-}
-```
-
-## 2. Ejecución
+- Node.js 18 o superior.
 
 ```bash
-npm install
-npm start
-# Servicio en http://localhost:3001
+npm install     # instala las dependencias
+npm start       # inicia el servicio en http://localhost:3001
+npm run dev     # mismo, con recarga automática
+npm test        # ejecuta las 32 pruebas de los servicios web
 ```
 
-Prueba rápida (PowerShell):
+Verificación rápida:
 
 ```powershell
 Invoke-RestMethod -Uri http://localhost:3001/api/salud
-Invoke-RestMethod -Method Post -Uri http://localhost:3001/api/auth/registro `
-  -ContentType "application/json" -Body '{"username":"admin","password":"123456"}'
 Invoke-RestMethod -Method Post -Uri http://localhost:3001/api/auth/login `
-  -ContentType "application/json" -Body '{"username":"admin","password":"123456"}'
+  -ContentType "application/json" -Body '{"username":"administrador","password":"Admin123"}'
 ```
 
-## 3. Versionamiento con Git
+Para actualizar la especificación en `docs/openapi.yaml` después de modificar
+los servicios:
 
 ```bash
-git init
-git add .
-git commit -m "feat: servicio web registro y login"
-git log --oneline
+npm run docs:openapi
 ```
 
-## 4. Notas de seguridad
+## 5. Configuración
 
-- Contraseñas cifradas con `bcryptjs`.
-- Login retorna `JWT` firmado (`JWT_SECRET`, expira en `1h`).
-- Mensajes de error genéricos para no revelar si el usuario existe.
-- Almacén en memoria: al reiniciar se borra (para producción conectar BD).
+Todas las variables son opcionales; el servicio arranca con valores por
+defecto (ver `.env.example`).
+
+| Variable | Por defecto | Uso |
+|---|---|---|
+| `PORT` | `3001` | Puerto del servicio |
+| `JWT_SECRET` | valor formativo | Firma del token de autenticación |
+| `JWT_EXPIRES_IN` | `2h` | Vigencia del token |
+| `BCRYPT_ROUNDS` | `10` | Rondas de cifrado de contraseñas |
+
+> En producción `JWT_SECRET` debe definirse como variable de entorno con un
+> valor propio; el valor por defecto es únicamente para el entorno formativo.
+
+## 6. Usuarios de prueba
+
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| `administrador` | `Admin123` | Administrador |
+| `supervisor` | `Super123` | Supervisor |
+| `soporte` | `Soporte123` | Soporte Técnico |
+
+## 7. Dependencias
+
+| Paquete | Uso |
+|---|---|
+| `express` | Servidor web y enrutamiento |
+| `cors` | Permitir peticiones desde el frontend en otro puerto |
+| `jsonwebtoken` | Autenticación por token |
+| `bcryptjs` | Cifrado de contraseñas |
+
+## 8. Versionamiento
+
+El proyecto está versionado con **Git**. El historial completo, con un commit
+por módulo, permite ver cómo se construyeron los servicios:
+
+```bash
+git log --oneline
+git log --oneline -- backend
+```
