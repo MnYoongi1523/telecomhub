@@ -1,0 +1,8 @@
+{
+  "status": 401,
+  "body": {
+    "ok": false,
+    "mensaje": "Error en la autenticación: usuario o contraseña incorrectos.",
+    "error": "CREDENCIALES_INVALIDAS"
+  }
+}

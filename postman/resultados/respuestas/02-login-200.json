@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "body": {
+    "ok": true,
+    "mensaje": "Autenticación satisfactoria. Bienvenido.",
+    "data": {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbmlzdHJhZG9yIiwicm9sIjoiQWRtaW5pc3RyYWRvciIsImlhdCI6MTc5MTUxNDk4NCwiZXhwIjoxNzkxNTIyMTg0fQ.8LRd-O6-iqUmh3Bhf3v9AGJ-wrZOLp1DnhdCoreAFxA",
+      "usuario": {
+        "id": 1,
+        "nombre": "Santiago Ramírez",
+        "username": "administrador",
+        "rol": "Administrador",
+        "estado": "Activo",
+        "creadoEn": "2026-10-09T02:55:50.788Z"
+      }
+    }
+  }
+}

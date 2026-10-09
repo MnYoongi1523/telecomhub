@@ -1,0 +1,15 @@
+{
+  "status": 200,
+  "body": {
+    "ok": true,
+    "mensaje": "Perfil del usuario autenticado.",
+    "data": {
+      "id": 1,
+      "nombre": "Santiago Ramírez",
+      "username": "administrador",
+      "rol": "Administrador",
+      "estado": "Activo",
+      "creadoEn": "2026-10-09T02:55:50.788Z"
+    }
+  }
+}

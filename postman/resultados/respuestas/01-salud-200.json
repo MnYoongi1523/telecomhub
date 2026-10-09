@@ -1,0 +1,8 @@
+{
+  "status": 200,
+  "body": {
+    "ok": true,
+    "mensaje": "Servicio TelecomHub API en línea.",
+    "version": "1.0.0"
+  }
+}

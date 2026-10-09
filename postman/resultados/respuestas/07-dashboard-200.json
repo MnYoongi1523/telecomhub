@@ -1,0 +1,162 @@
+{
+  "status": 200,
+  "body": {
+    "ok": true,
+    "mensaje": "Resumen de gestión de TelecomHub.",
+    "data": {
+      "clientes": {
+        "total": 6,
+        "activos": 5,
+        "suspendidos": 1
+      },
+      "contratos": {
+        "total": 6,
+        "vigentes": 5,
+        "porVencer": 0,
+        "finalizados": 1,
+        "cancelados": 0,
+        "ingresoMensual": 349000
+      },
+      "facturacion": {
+        "total": 2,
+        "pendientes": 1,
+        "vencidas": 0,
+        "facturado": 154000,
+        "carteraPorCobrar": 89000
+      },
+      "pagos": {
+        "total": 1,
+        "delMes": 0,
+        "recaudoDelMes": 0,
+        "recaudoTotal": 65000,
+        "porMetodo": {
+          "Transferencia": 1
+        }
+      },
+      "soporte": {
+        "total": 7,
+        "abiertos": 5,
+        "enProceso": 1,
+        "resueltos": 1,
+        "porPrioridad": {
+          "Alta": 5,
+          "Media": 1
+        }
+      },
+      "ultimosTickets": [
+        {
+          "id": 7,
+          "clienteId": 2,
+          "asunto": "Sin senal",
+          "descripcion": "El servicio se cae cada noche desde las ocho.",
+          "prioridad": "Alta",
+          "estado": "Abierto",
+          "fecha": "2026-10-08",
+          "cliente": "Ana Gómez"
+        },
+        {
+          "id": 6,
+          "clienteId": 2,
+          "asunto": "Sin senal",
+          "descripcion": "El servicio se cae cada noche desde las ocho.",
+          "prioridad": "Alta",
+          "estado": "Abierto",
+          "fecha": "2026-10-08",
+          "cliente": "Ana Gómez"
+        },
+        {
+          "id": 5,
+          "clienteId": 2,
+          "asunto": "Sin senal",
+          "descripcion": "El servicio se cae cada noche desde las ocho.",
+          "prioridad": "Alta",
+          "estado": "Abierto",
+          "fecha": "2026-10-08",
+          "cliente": "Ana Gómez"
+        },
+        {
+          "id": 4,
+          "clienteId": 4,
+          "asunto": "Consulta de Factura",
+          "descripcion": "Duda sobre el valor facturado.",
+          "prioridad": "Media",
+          "estado": "En proceso",
+          "fecha": "2026-10-08",
+          "cliente": "María Ortega"
+        },
+        {
+          "id": 3,
+          "clienteId": 3,
+          "asunto": "Reporte de Caída",
+          "descripcion": "Intermitencias durante la tarde.",
+          "prioridad": "Alta",
+          "estado": "Abierto",
+          "fecha": "2026-10-08",
+          "cliente": "Luis Torres"
+        }
+      ],
+      "ultimosClientes": [
+        {
+          "id": 6,
+          "nombre": "Cliente Testing",
+          "cedula": "10506713",
+          "telefono": "+57 301 555 6677",
+          "correo": "testing567@correo.com",
+          "planId": 1,
+          "direccion": "Carrera 7 # 10-20",
+          "estado": "Activo",
+          "plan": "Fibra 100MB",
+          "contratosActivos": 0
+        },
+        {
+          "id": 5,
+          "nombre": "Cliente Testing",
+          "cedula": "10506882",
+          "telefono": "+57 301 555 6677",
+          "correo": "testing113@correo.com",
+          "planId": 1,
+          "direccion": "Carrera 7 # 10-20",
+          "estado": "Activo",
+          "plan": "Fibra 100MB",
+          "contratosActivos": 0
+        },
+        {
+          "id": 4,
+          "nombre": "María Ortega",
+          "cedula": "1040506070",
+          "telefono": "+57 315 222 3344",
+          "correo": "maria.ortega@correo.com",
+          "planId": 2,
+          "direccion": "Calle 10 # 5-44, Barranquilla",
+          "estado": "Activo",
+          "plan": "Fibra 300MB",
+          "contratosActivos": 3
+        },
+        {
+          "id": 3,
+          "nombre": "Luis Torres",
+          "cedula": "1030405060",
+          "telefono": "+57 320 456 7890",
+          "correo": "luis.torres@correo.com",
+          "planId": 3,
+          "direccion": "Avenida 6 # 33-18, Cali",
+          "estado": "Suspendido",
+          "plan": "Fibra 500MB",
+          "contratosActivos": 1
+        },
+        {
+          "id": 2,
+          "nombre": "Ana Gómez",
+          "cedula": "1020304050",
+          "telefono": "+57 310 987 6543",
+          "correo": "ana.gomez@correo.com",
+          "planId": 1,
+          "direccion": "Carrera 8 # 22-15, Medellín",
+          "estado": "Activo",
+          "plan": "Fibra 100MB",
+          "contratosActivos": 1
+        }
+      ]
+    }
+  }
+}

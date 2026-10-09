@@ -1,0 +1,50 @@
+{
+  "status": 200,
+  "body": {
+    "ok": true,
+    "mensaje": "Listado de planes de servicio.",
+    "data": [
+      {
+        "id": 1,
+        "nombre": "Fibra 100MB",
+        "velocidad": 100,
+        "precio": 65000,
+        "tipo": "Fibra",
+        "estado": "Activo"
+      },
+      {
+        "id": 2,
+        "nombre": "Fibra 300MB",
+        "velocidad": 300,
+        "precio": 89000,
+        "tipo": "Fibra",
+        "estado": "Activo"
+      },
+      {
+        "id": 3,
+        "nombre": "Fibra 500MB",
+        "velocidad": 500,
+        "precio": 120000,
+        "tipo": "Fibra",
+        "estado": "Activo"
+      },
+      {
+        "id": 4,
+        "nombre": "Banda Ancha 80MB",
+        "velocidad": 80,
+        "precio": 55000,
+        "tipo": "Banda Ancha",
+        "estado": "Activo"
+      },
+      {
+        "id": 5,
+        "nombre": "Fibra 700MB",
+        "velocidad": 700,
+        "precio": 150000,
+        "tipo": "Fibra",
+        "estado": "Activo"
+      }
+    ],
+    "total": 5
+  }
+}

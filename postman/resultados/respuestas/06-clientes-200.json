@@ -1,0 +1,82 @@
+{
+  "status": 200,
+  "body": {
+    "ok": true,
+    "mensaje": "Listado de clientes.",
+    "data": [
+      {
+        "id": 1,
+        "nombre": "Carlos Mendoza",
+        "cedula": "1010203040",
+        "telefono": "+57 300 123 4567",
+        "correo": "carlos.mendoza@correo.com",
+        "planId": 2,
+        "direccion": "Calle 45 # 12-30, Bogotá",
+        "estado": "Activo",
+        "plan": "Fibra 300MB",
+        "contratosActivos": 1
+      },
+      {
+        "id": 2,
+        "nombre": "Ana Gómez",
+        "cedula": "1020304050",
+        "telefono": "+57 310 987 6543",
+        "correo": "ana.gomez@correo.com",
+        "planId": 1,
+        "direccion": "Carrera 8 # 22-15, Medellín",
+        "estado": "Activo",
+        "plan": "Fibra 100MB",
+        "contratosActivos": 1
+      },
+      {
+        "id": 3,
+        "nombre": "Luis Torres",
+        "cedula": "1030405060",
+        "telefono": "+57 320 456 7890",
+        "correo": "luis.torres@correo.com",
+        "planId": 3,
+        "direccion": "Avenida 6 # 33-18, Cali",
+        "estado": "Suspendido",
+        "plan": "Fibra 500MB",
+        "contratosActivos": 1
+      },
+      {
+        "id": 4,
+        "nombre": "María Ortega",
+        "cedula": "1040506070",
+        "telefono": "+57 315 222 3344",
+        "correo": "maria.ortega@correo.com",
+        "planId": 2,
+        "direccion": "Calle 10 # 5-44, Barranquilla",
+        "estado": "Activo",
+        "plan": "Fibra 300MB",
+        "contratosActivos": 3
+      },
+      {
+        "id": 5,
+        "nombre": "Cliente Testing",
+        "cedula": "10506882",
+        "telefono": "+57 301 555 6677",
+        "correo": "testing113@correo.com",
+        "planId": 1,
+        "direccion": "Carrera 7 # 10-20",
+        "estado": "Activo",
+        "plan": "Fibra 100MB",
+        "contratosActivos": 0
+      },
+      {
+        "id": 6,
+        "nombre": "Cliente Testing",
+        "cedula": "10506713",
+        "telefono": "+57 301 555 6677",
+        "correo": "testing567@correo.com",
+        "planId": 1,
+        "direccion": "Carrera 7 # 10-20",
+        "estado": "Activo",
+        "plan": "Fibra 100MB",
+        "contratosActivos": 0
+      }
+    ],
+    "total": 6
+  }
+}

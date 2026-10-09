@@ -1,0 +1,21 @@
+{
+  "status": 200,
+  "body": {
+    "ok": true,
+    "mensaje": "Factura encontrada.",
+    "data": {
+      "id": 1,
+      "contratoId": 1,
+      "clienteId": 1,
+      "planId": 2,
+      "valor": 89000,
+      "emision": "2026-09-08",
+      "vencimiento": "2026-10-23",
+      "pagada": false,
+      "cliente": "Carlos Mendoza",
+      "plan": "Fibra 300MB",
+      "diasParaVencer": 15,
+      "estado": "Pendiente"
+    }
+  }
+}
